@@ -1,0 +1,29 @@
+class ResponseModel {
+  final int statusCode;
+  final dynamic responseData;
+  final String? message;
+  final bool isSuccess;
+
+  ResponseModel({
+    required this.statusCode,
+    this.responseData,
+    this.message,
+    required this.isSuccess,
+  });
+
+  factory ResponseModel.success(int statusCode, dynamic data) {
+    return ResponseModel(
+      statusCode: statusCode,
+      isSuccess: true,
+      responseData: data,
+    );
+  }
+
+  factory ResponseModel.error(int statusCode, String message) {
+    return ResponseModel(
+      statusCode: statusCode,
+      isSuccess: false,
+      message: message,
+    );
+  }
+}
