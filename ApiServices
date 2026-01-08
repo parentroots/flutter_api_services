@@ -1,0 +1,112 @@
+import 'dart:convert';
+
+import 'package:note_taker/services/response_model/response_model.dart';
+import 'package:http/http.dart' as http;
+
+class ApiServices {
+  static Map<String, String> defaultHeaders = {
+    "Content-Type": "application/json",
+  };
+
+
+
+  //========================Get Method start====================
+  static Future<ResponseModel> get(String endPoint, {Map<String, String>? headers,}) async {
+    try {
+      final response = await http.get(
+        Uri.parse(endPoint),
+        headers: headers ?? defaultHeaders,
+      );
+
+      return _processResponse(response);
+    } catch (e) {
+      return ResponseModel.error(500, e.toString());
+    }
+  }
+
+  //=========================Post Method start====================
+  static Future<ResponseModel>post(String endPoint,{Map<String,String>?headers,Map<String,dynamic>?body})async{
+    try{
+      final response =await http.post(
+        Uri.parse(endPoint),
+        headers: headers?? defaultHeaders,
+        body: jsonEncode(body),
+      );
+      return _processResponse(response);
+
+    }catch(e){
+      return ResponseModel.error(500, e.toString());
+    }
+  }
+
+  //=========================Put Method start====================
+
+  static Future<ResponseModel> put(String endpoint, {Map<String, String>? headers, Map<String, dynamic>? body,}) async {
+    try {
+      final response = await http.put(
+        Uri.parse(endpoint),
+        headers: headers ?? defaultHeaders,
+        body: jsonEncode(body),
+      );
+      return _processResponse(response);
+    } catch (e) {
+      return ResponseModel.error(500, e.toString());
+    }
+  }
+
+  // ======================= Patch method start=== =================
+
+  static Future<ResponseModel> patch(String endpoint, {Map<String, String>? headers, Map<String, dynamic>? body,}) async {
+    try {
+      final response = await http.patch(
+        Uri.parse( endpoint),
+        headers: headers ?? defaultHeaders,
+        body: jsonEncode(body),
+      );
+      return _processResponse(response);
+    } catch (e) {
+      return ResponseModel.error(500, e.toString());
+    }
+  }
+
+
+  // ======================= Delete method start=== =================
+
+  static Future<ResponseModel> delete(String endpoint, {Map<String, String>? headers,}) async {
+    try {
+      final response = await http.delete(
+        Uri.parse( endpoint),
+        headers: headers ?? defaultHeaders,
+      );
+      return _processResponse(response);
+    } catch (e) {
+      return ResponseModel.error(500, e.toString());
+    }
+  }
+
+
+
+
+  //========================Response Process start====================
+  static ResponseModel _processResponse(http.Response response) {
+    try {
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return ResponseModel.success(response.statusCode, data);
+      } else {
+        return ResponseModel.error(
+          response.statusCode,
+          data['message'] ?? "Something went wrong",
+        );
+      }
+    } catch (_) {
+      return ResponseModel.error(
+        response.statusCode,
+        "Invalid response format",
+      );
+    }
+  }
+}
+
+
